@@ -53,7 +53,7 @@ async def get_recommendations(
         # Create cache key (includes recommendation type)
         cache_key = create_recommendation_cache_key(
             request.movies, 
-            request.preferences.dict() if request.preferences else None,
+            request.preferences.model_dump() if request.preferences else None,
             recommendation_type
         )
         
@@ -352,7 +352,7 @@ async def regenerate_recommendations(
         # Clear existing cache for this request
         cache_key = create_recommendation_cache_key(
             request.movies, 
-            request.preferences.dict() if request.preferences else None,
+            request.preferences.model_dump() if request.preferences else None,
             recommendation_type
         )
         await cache_service.delete(cache_key, "recommendations")

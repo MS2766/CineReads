@@ -1,6 +1,9 @@
 from pydantic_settings import BaseSettings
+from pydantic import ConfigDict
 
 class Settings(BaseSettings):
+    model_config = ConfigDict(env_file=".env")
+    
     # Required API keys
     openai_api_key: str
     hardcover_api_key: str
@@ -42,8 +45,5 @@ class Settings(BaseSettings):
     enable_genre_analysis: bool = True
     enable_complexity_scoring: bool = True
     enable_taste_matching: bool = True
-    
-    class Config:
-        env_file = ".env"
 
 settings = Settings()

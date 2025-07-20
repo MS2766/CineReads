@@ -13,19 +13,22 @@ class CacheService:
         self.cache_dir = Path(cache_dir)
         self.cache_dir.mkdir(exist_ok=True)
         self._lock = Lock()
+        self._cleanup_started = False
         
         # Create subdirectories for organization
         (self.cache_dir / "recommendations").mkdir(exist_ok=True)
         (self.cache_dir / "books").mkdir(exist_ok=True)
         (self.cache_dir / "taste_profiles").mkdir(exist_ok=True)
         
-        # Clean up old cache files on startup
-        asyncio.create_task(self._cleanup_expired_cache())
+        # Note: Cleanup will be started on first cache operation
     
     def _json_serializer(self, obj):
         """Custom JSON serializer for Pydantic models and other objects"""
-        if hasattr(obj, 'dict'):
-            # Pydantic model
+        if hasattr(obj, 'model_dump'):
+            # Pydantic v2 model
+            return obj.model_dump()
+        elif hasattr(obj, 'dict'):
+            # Pydantic v1 model (fallback)
             return obj.dict()
         elif hasattr(obj, '__dict__'):
             # Generic object with attributes
@@ -43,8 +46,19 @@ class CacheService:
         safe_key = self._generate_cache_key(key)
         return self.cache_dir / cache_type / f"{safe_key}.json"
     
+    async def _ensure_cleanup_started(self):
+        """Start cleanup task if not already started"""
+        if not self._cleanup_started:
+            self._cleanup_started = True
+            try:
+                asyncio.create_task(self._cleanup_expired_cache())
+            except RuntimeError:
+                # No event loop running, cleanup will happen later
+                pass
+
     async def get(self, key: str, cache_type: str = "recommendations") -> Optional[Any]:
         """Get cached value if it exists and hasn't expired"""
+        await self._ensure_cleanup_started()
         cache_file = self._get_cache_file_path(key, cache_type)
         
         try:
@@ -71,6 +85,7 @@ class CacheService:
     
     async def set(self, key: str, value: Any, expire: int = 3600, cache_type: str = "recommendations"):
         """Set cached value with expiration"""
+        await self._ensure_cleanup_started()
         cache_file = self._get_cache_file_path(key, cache_type)
         
         try:
@@ -94,7 +109,7 @@ class CacheService:
             # Atomic rename
             temp_file.rename(cache_file)
             
-        except (OSError, json.JSONEncodeError) as e:
+        except (OSError, TypeError, ValueError) as e:
             # Log error but don't fail the request
             print(f"Cache write error for key '{key}': {e}")
     
