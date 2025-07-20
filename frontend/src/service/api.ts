@@ -3,8 +3,8 @@ import { UserPreferences, RecommendationResponse, CacheStats, EnhancedRecommenda
 export class CineReadsAPI {
   private baseURL: string;
 
-  constructor(baseURL: string = 'http://localhost:8000/api') {
-    this.baseURL = baseURL;
+  constructor(baseURL: string = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000') {
+    this.baseURL = `${baseURL}/api`;
   }
 
   async getRecommendations(

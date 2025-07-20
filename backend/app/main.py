@@ -38,10 +38,11 @@ app = FastAPI(
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
+    allow_origin_regex=r"https://.*\.vercel\.app",  # Allow all Vercel deployments
     allow_origins=[
         "http://localhost:3000",  # Next.js dev server
         "http://localhost:3001",  # Alternative dev port
-        "https://cinereads.vercel.app",  # Production (adjust as needed)
+        "https://cinereads.vercel.app",  # Production
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "DELETE"],
