@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Film, X, Plus, Star, Clock, TrendingUp, Calendar, Image as ImageIcon } from 'lucide-react';
+import Image from 'next/image';
+import { Search, Film, X, Plus, Star, TrendingUp, Calendar, Image as ImageIcon } from 'lucide-react';
 import { tmdbService } from '@/service/tmdb';
 import { Movie } from '@/types';
 
@@ -137,7 +138,6 @@ export const MovieInput: React.FC<MovieInputProps> = ({
   }, []);
 
   const isInputDisabled = movies.length >= maxMovies;
-  const isAddDisabled = !inputValue.trim() || isInputDisabled;
 
   return (
     <div className="space-y-6">
@@ -308,9 +308,11 @@ export const MovieInput: React.FC<MovieInputProps> = ({
                         <div className="flex-shrink-0">
                           {movie.poster_path ? (
                             <div className="w-14 h-20 rounded-lg overflow-hidden shadow-md border border-card-border movie-poster-glow relative group">
-                              <img
+                              <Image
                                 src={`https://image.tmdb.org/t/p/w154${movie.poster_path}`}
                                 alt={movie.title}
+                                width={56}
+                                height={80}
                                 className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
                                 onError={(e) => {
                                   const target = e.target as HTMLImageElement;
@@ -417,9 +419,11 @@ export const MovieInput: React.FC<MovieInputProps> = ({
                   {/* Movie Poster */}
                   <div className="relative w-12 h-16 rounded overflow-hidden bg-card-bg border border-card-border flex-shrink-0">
                     {movie.poster_url ? (
-                      <img
+                      <Image
                         src={movie.poster_url}
                         alt={`${movie.title} poster`}
+                        width={48}
+                        height={64}
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;

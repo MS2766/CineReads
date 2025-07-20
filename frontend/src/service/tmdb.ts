@@ -1,3 +1,5 @@
+import { Movie } from '@/types';
+
 const TMDB_API_KEY = '473496e0286c39ee2c92ec60c58ac047';
 const TMDB_READ_ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0NzM0OTZlMDI4NmMzOWVlMmM5MmVjNjBjNThhYzA0NyIsIm5iZiI6MTc1Mjk0ODgxOS4wNjIsInN1YiI6IjY4N2JlMDUzMjQyOWQ3NDI5M2Q5ODc5YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.bmVIZn4oME4P1WYm2ClDycDT_ackwpxIPoAAvRIULN8';
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
@@ -27,7 +29,7 @@ class TMDBService {
     this.readAccessToken = TMDB_READ_ACCESS_TOKEN;
   }
 
-  async searchMovies(query: string): Promise<TMDBMovie[]> {
+  async searchMovies(query: string): Promise<Movie[]> {
     if (!query || query.trim().length < 2) {
       return [];
     }
@@ -114,7 +116,7 @@ class TMDBService {
     }
   }
 
-  private getFallbackMovies(query: string): TMDBMovie[] {
+  private getFallbackMovies(query: string): Movie[] {
     const queryLower = query.toLowerCase();
     
     // Comprehensive fallback movie database
@@ -232,7 +234,7 @@ class TMDBService {
     return `${movie.title}${year}`;
   }
 
-  formatMovieWithPoster(movie: TMDBMovie): any {
+  formatMovieWithPoster(movie: TMDBMovie): Movie {
     return {
       id: movie.id,
       title: movie.title,

@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { BookOpen, Star, ExternalLink, Quote } from 'lucide-react';
 import { BookRecommendation } from '@/types';
 
@@ -25,9 +26,11 @@ export const BookCard: React.FC<BookCardProps> = ({ book, index = 0 }) => {
             transition={{ duration: 0.3 }}
           >
             {book.cover_url ? (
-              <img
+              <Image
                 src={book.cover_url}
                 alt={`Cover of ${book.title}`}
+                width={128}
+                height={192}
                 className="w-32 h-48 object-cover transition-all duration-300 group-hover/cover:brightness-110"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;

@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Settings, X, Smile, Frown, Heart, Skull, Clock, Zap } from 'lucide-react';
 import { UserPreferences, MoodOption, PaceOption } from '@/types';
 import { GlassPanel } from './cinematic/GlassPanel';
@@ -33,7 +33,7 @@ export const PreferencesPanel: React.FC<PreferencesPanelProps> = ({
   isOpen,
   onToggle
 }) => {
-  const updatePreferences = (key: keyof UserPreferences, value: any) => {
+  const updatePreferences = (key: keyof UserPreferences, value: string | string[] | null) => {
     onPreferencesChange({
       ...preferences,
       [key]: value
