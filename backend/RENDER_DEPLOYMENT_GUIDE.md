@@ -46,6 +46,7 @@ requests==2.32.3             # New for health checks
 1. **Ensure Environment Variables**:
    - Set `OPENAI_API_KEY` in Render dashboard
    - Set `HARDCOVER_API_KEY` in Render dashboard
+   - Set `RENDER_EXTERNAL_URL` to your app's URL (e.g., `https://your-app.onrender.com`) for keep-alive functionality
 
 2. **Deploy**:
    - Push your changes to your repository
@@ -53,9 +54,19 @@ requests==2.32.3             # New for health checks
    - The `runtime.txt` should force Python 3.11.10
 
 3. **Monitor**:
-   - Check Render logs for successful startup
+   - Check Render logs for successful startup and keep-alive messages
    - Access `/health` endpoint to verify the service is running
    - Access `/docs` for FastAPI documentation
+   - Look for keep-alive pings every 14 minutes in the logs
+
+## Keep-Alive Feature
+
+The backend now includes automatic keep-alive functionality to prevent Render's free tier from putting your app to sleep:
+
+- **Automatic activation**: Only runs when `RENDER_EXTERNAL_URL` is set
+- **14-minute intervals**: Pings the health endpoint every 14 minutes
+- **Zero configuration**: Works out of the box once deployed
+- **See**: `KEEP_ALIVE_SETUP.md` for detailed information
 
 ## Files Added/Modified
 
