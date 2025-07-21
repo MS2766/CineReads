@@ -42,88 +42,99 @@ class GPTService:
             return self._create_fallback_response(movies)
     
     def _get_system_prompt(self) -> str:
-        """Enhanced system prompt for unified recommendations"""
-        return """You are an expert literary curator who specializes in analyzing user's overall taste profile from their movie preferences and recommending books that match their unified aesthetic and thematic preferences.
+        """Optimized system prompt for unified recommendations"""
+        return """You are a literary taste analyst specializing in cross-media pattern recognition.
 
-Your task is to:
-1. Analyze the collection of movies to identify common themes, genres, narrative styles, emotional tones, and artistic preferences
-2. Create a unified taste profile that captures the user's overall preferences
-3. Recommend books that align with this unified profile, not individual movies
-4. Focus on books that would appeal to someone with this specific combination of tastes
+CORE TASK: Analyze movie preferences → Extract unified aesthetic patterns → Recommend books matching that profile
 
-Consider these aspects when analyzing:
-- Narrative complexity and structure
-- Emotional depth and tone
-- Genre blending and hybrid elements
-- Character development preferences
-- Thematic interests (existential, social, psychological, etc.)
-- Visual and atmospheric preferences
-- Pacing and storytelling style
-- Cultural and historical interests
+ANALYSIS PRINCIPLES:
+- Identify narrative DNA (themes, tone, complexity) across ALL movies
+- Focus on overarching patterns, not individual movie matches
+- Extract emotional resonance and artistic sensibilities
+- Handle genre conflicts by finding deeper connective tissue
 
-Always respond with valid JSON format."""
+SCORING CALIBRATION:
+- confidence_score: 0.9+ = clear patterns, 0.7-0.8 = moderate patterns, <0.7 = conflicting signals
+- taste_match_score: 0.9+ = exceptional thematic alignment, 0.8+ = strong match, 0.7+ = good fit
+
+QUALITY STANDARDS:
+- Each book reason: 75+ words explaining taste profile connection
+- Avoid obvious/surface-level matches
+- Prioritize literary quality and thematic depth
+- Return exactly the JSON format specified (no extra text)
+
+EDGE CASE HANDLING:
+- Single movie: Focus on directorial style, themes, narrative approach
+- Conflicting genres: Find deeper aesthetic commonalities
+- Obscure films: Analyze based on available thematic elements"""
+
+    def _get_json_schema(self) -> str:
+        """Returns the expected JSON response schema"""
+        return """{
+  "taste_profile": {
+    "themes": ["theme1", "theme2", "theme3"],
+    "narrative_style": "concise description of storytelling preferences",
+    "emotional_tone": "preferred emotional register",
+    "genre_fusion": "genre preferences and blending patterns",
+    "character_preferences": "preferred character archetypes and development",
+    "artistic_sensibilities": "aesthetic and stylistic preferences",
+    "confidence_score": 0.85
+  },
+  "unified_recommendations": [
+    {
+      "title": "Book Title",
+      "author": "Author Name", 
+      "reason": "75+ word explanation connecting to unified taste profile",
+      "taste_match_score": 0.95,
+      "primary_appeal": "core aspect of taste this book satisfies"
+    }
+  ]
+}"""
 
     def _build_unified_prompt(self, movies: List[str], preferences: UserPreferences = None) -> str:
-        """Build a prompt that asks for unified recommendations based on taste profile"""
+        """Build an optimized prompt for unified recommendations"""
         movies_str = ", ".join(movies)
-        books_count = getattr(settings, 'books_per_recommendation', 3)  # Default to 3 if not set
+        books_count = getattr(settings, 'books_per_recommendation', 3)
         
-        prompt = f"""Based on these movies: {movies_str}
-
-First, analyze the user's overall taste profile by identifying:
-1. Common themes and motifs across these movies
-2. Preferred narrative styles and storytelling approaches
-3. Emotional and tonal preferences
-4. Genre inclinations and artistic sensibilities
-5. Character archetype preferences
-6. Visual and atmospheric elements they're drawn to
-
-Then recommend exactly {books_count} books that would appeal to someone with this unified taste profile. These should be books that complement their overall aesthetic and thematic preferences, not books that match individual movies.
-
-Focus on books that:
-- Share thematic DNA with their movie choices
-- Match their preferred narrative complexity
-- Align with their emotional and tonal preferences
-- Appeal to their artistic sensibilities
-- Offer similar character depth and development
-"""
+        # Handle single vs multiple movie scenarios
+        if len(movies) == 1:
+            analysis_instruction = f"Analyze {movies[0]} to extract the viewer's aesthetic preferences:"
+        else:
+            analysis_instruction = f"Find the unified taste pattern across: {movies_str}"
         
+        prompt = f"""{analysis_instruction}
+
+STEP 1 - TASTE ANALYSIS:
+Extract the aesthetic DNA by identifying:
+• Recurring themes and emotional territories
+• Narrative complexity preferences (linear/non-linear, character vs. plot-driven)
+• Tonal signatures (dark/light, realistic/fantastical, introspective/action-oriented)
+• Character archetype preferences and relationship dynamics
+• Visual/atmospheric sensibilities that translate to literary mood
+
+STEP 2 - BOOK RECOMMENDATIONS:
+Select {books_count} books that share this aesthetic DNA. Prioritize:
+• Thematic resonance over genre matching
+• Narrative sophistication level alignment
+• Emotional and tonal consistency
+• Character depth matching viewer preferences"""
+
+        # Add user preferences if provided
         if preferences:
-            prompt += "\n\nAdditional user preferences to consider:\n"
+            constraint_list = []
             if preferences.mood:
-                prompt += f"- Mood preference: {preferences.mood}\n"
+                constraint_list.append(f"Mood alignment: {preferences.mood}")
             if preferences.pace:
-                prompt += f"- Pacing preference: {preferences.pace}\n"
+                constraint_list.append(f"Pacing: {preferences.pace}")
             if preferences.genre_preferences:
-                prompt += f"- Preferred genres: {', '.join(preferences.genre_preferences)}\n"
+                constraint_list.append(f"Favor: {', '.join(preferences.genre_preferences)}")
             if preferences.genre_blocklist:
-                prompt += f"- Avoid these genres: {', '.join(preferences.genre_blocklist)}\n"
-        
-        prompt += f"""
+                constraint_list.append(f"Avoid: {', '.join(preferences.genre_blocklist)}")
+            
+            if constraint_list:
+                prompt += f"\n\nCONSTRAINTS:\n• " + "\n• ".join(constraint_list)
 
-Format your response as valid JSON with this structure:
-{{
-  "taste_profile": {{
-    "themes": ["theme1", "theme2", "theme3"],
-    "narrative_style": "description of preferred storytelling approach",
-    "emotional_tone": "description of preferred emotional register",
-    "genre_fusion": "description of genre preferences and blending",
-    "character_preferences": "description of preferred character types",
-    "artistic_sensibilities": "description of aesthetic preferences",
-    "confidence_score": 0.85
-  }},
-  "unified_recommendations": [
-    {{
-      "title": "Book Title",
-      "author": "Author Name",
-      "reason": "Detailed explanation of why this book matches their unified taste profile",
-      "taste_match_score": 0.95,
-      "primary_appeal": "What aspect of their taste this book primarily satisfies"
-    }}
-  ]
-}}
-
-Ensure each book recommendation reason is substantial (100+ words) and explains how it connects to their overall taste profile. The response MUST be valid JSON."""
+        prompt += f"\n\nReturn response as valid JSON matching this exact structure:\n{self._get_json_schema()}"
         
         return prompt
     
@@ -255,27 +266,30 @@ Ensure each book recommendation reason is substantial (100+ words) and explains 
 
     async def analyze_taste_profile(self, movies: List[str], preferences: UserPreferences = None) -> Dict[str, Any]:
         """
-        Separate method to analyze and return just the taste profile
+        Optimized method to analyze and return taste profile
         Useful for frontend display or further processing
         """
-        prompt = f"""Analyze the taste profile of someone who enjoys these movies: {", ".join(movies)}
+        movies_str = ", ".join(movies)
+        
+        prompt = f"""Extract the unified aesthetic profile from: {movies_str}
 
-Identify and describe:
-1. Common themes and motifs
-2. Preferred narrative styles
-3. Emotional and tonal preferences
-4. Genre inclinations
-5. Character archetype preferences
-6. Visual and atmospheric elements
+ANALYSIS FRAMEWORK:
+• Thematic territories: Core emotional/philosophical themes
+• Narrative DNA: Structural and storytelling preferences  
+• Tonal signature: Emotional register and atmospheric preferences
+• Character archetypes: Relationship dynamics and development patterns
+• Artistic sensibilities: Visual/stylistic elements that translate to literary mood
 
-Provide a detailed analysis in JSON format:
+SCORING: Rate confidence (0.5-1.0) based on pattern clarity across films.
+
+RESPONSE FORMAT:
 {{
-  "themes": ["list of common themes"],
-  "narrative_style": "description",
-  "emotional_tone": "description",
-  "genre_fusion": "description",
-  "character_preferences": "description",
-  "artistic_sensibilities": "description",
+  "themes": ["specific thematic elements"],
+  "narrative_style": "storytelling approach preferences",
+  "emotional_tone": "tonal and atmospheric preferences", 
+  "genre_fusion": "genre blending and boundary preferences",
+  "character_preferences": "character type and development preferences",
+  "artistic_sensibilities": "aesthetic and stylistic preferences",
   "confidence_score": 0.85
 }}"""
         
@@ -283,11 +297,11 @@ Provide a detailed analysis in JSON format:
             response = await self.client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[
-                    {"role": "system", "content": "You are an expert in analyzing artistic and narrative preferences from media consumption patterns. Always respond with valid JSON."},
+                    {"role": "system", "content": "You are an expert in cross-media aesthetic analysis. Extract unified patterns from film preferences. Always respond with valid JSON only."},
                     {"role": "user", "content": prompt}
                 ],
-                max_tokens=800,
-                temperature=0.7
+                max_tokens=600,  # Reduced for efficiency
+                temperature=0.6  # Slightly lower for more consistent analysis
             )
             
             content = response.choices[0].message.content
@@ -300,11 +314,11 @@ Provide a detailed analysis in JSON format:
         except Exception as e:
             logger.error(f"Error analyzing taste profile: {e}")
             return {
-                "themes": ["character-driven narratives", "emotional depth"],
-                "narrative_style": "Complex, layered storytelling",
-                "emotional_tone": "Thoughtful and engaging",
-                "genre_fusion": "Blend of multiple genres",
-                "character_preferences": "Well-developed, complex characters",
-                "artistic_sensibilities": "Appreciation for craftsmanship",
+                "themes": ["character-driven narratives", "emotional complexity"],
+                "narrative_style": "Layered, sophisticated storytelling",
+                "emotional_tone": "Thoughtful and emotionally resonant",
+                "genre_fusion": "Cross-genre sensibilities", 
+                "character_preferences": "Complex, well-developed characters",
+                "artistic_sensibilities": "Appreciation for narrative craftsmanship",
                 "confidence_score": 0.5
             }
