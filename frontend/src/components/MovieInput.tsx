@@ -174,7 +174,7 @@ export const MovieInput: React.FC<MovieInputProps> = ({
                 </motion.div>
               </div>
 
-              {/* Enhanced Input Field */}
+              {/* Enhanced Input Field - Mobile Optimized */}
               <input
                 ref={inputRef}
                 type="text"
@@ -192,8 +192,8 @@ export const MovieInput: React.FC<MovieInputProps> = ({
                   // Delay hiding suggestions to allow clicks
                   setTimeout(() => setShowSuggestions(false), 150);
                 }}
-                placeholder={isInputDisabled ? "Maximum movies reached" : "Search for movies... (e.g., Inception, Matrix, Interstellar)"}
-                className={`w-full pl-12 pr-24 py-4 text-lg rounded-xl transition-all duration-300 glass-panel border ${
+                placeholder={isInputDisabled ? "Maximum movies reached" : "Search for movies..."}
+                className={`w-full pl-10 sm:pl-12 pr-20 sm:pr-24 py-3 sm:py-4 text-base sm:text-lg rounded-xl transition-all duration-300 glass-panel border ${
                   isFocused 
                     ? 'border-primary shadow-lg' 
                     : 'border-input-border hover:border-primary/50'
@@ -208,7 +208,7 @@ export const MovieInput: React.FC<MovieInputProps> = ({
                 spellCheck="false"
               />
 
-              {/* Clear Button */}
+              {/* Clear Button - Mobile Optimized */}
               <AnimatePresence>
                 {inputValue && !isInputDisabled && (
                   <motion.button
@@ -220,23 +220,23 @@ export const MovieInput: React.FC<MovieInputProps> = ({
                       setShowSuggestions(false);
                       inputRef.current?.focus();
                     }}
-                    className="absolute right-12 top-1/2 transform -translate-y-1/2 p-2 rounded-full hover:bg-background-secondary transition-colors duration-200 text-medium-contrast hover:text-high-contrast focusable"
+                    className="absolute right-10 sm:right-12 top-1/2 transform -translate-y-1/2 p-2 rounded-full hover:bg-background-secondary transition-colors duration-200 text-medium-contrast hover:text-high-contrast focusable"
                     type="button"
                     title="Clear search"
                   >
-                    <X className="w-4 h-4" />
+                    <X className="w-3 h-3 sm:w-4 sm:h-4" />
                   </motion.button>
                 )}
               </AnimatePresence>
 
-              {/* Loading Indicator */}
+              {/* Loading Indicator - Mobile Optimized */}
               {isLoading && (
                 <motion.div
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2"
+                  className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2"
                   animate={{ rotate: 360 }}
                   transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                 >
-                  <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full" />
+                  <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-primary border-t-transparent rounded-full" />
                 </motion.div>
               )}
 
@@ -405,7 +405,7 @@ export const MovieInput: React.FC<MovieInputProps> = ({
           <h3 className="text-sm font-semibold text-high-contrast scholarly-heading mb-3">
             Selected Movies ({movies.length}/{maxMovies})
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {movies.map((movie, index) => (
               <motion.div
                 key={movie.id}
@@ -416,8 +416,8 @@ export const MovieInput: React.FC<MovieInputProps> = ({
                 className="glass-panel p-3 rounded-lg border border-card-border hover:border-primary/30 transition-all duration-200 group"
               >
                 <div className="flex items-center gap-3">
-                  {/* Movie Poster */}
-                  <div className="relative w-12 h-16 rounded overflow-hidden bg-card-bg border border-card-border flex-shrink-0">
+                  {/* Movie Poster - Mobile Optimized */}
+                  <div className="relative w-10 h-14 sm:w-12 sm:h-16 rounded overflow-hidden bg-card-bg border border-card-border flex-shrink-0">
                     {movie.poster_url ? (
                       <Image
                         src={movie.poster_url}
@@ -433,13 +433,13 @@ export const MovieInput: React.FC<MovieInputProps> = ({
                       />
                     ) : null}
                     <div className={`absolute inset-0 flex items-center justify-center ${movie.poster_url ? 'hidden' : ''}`}>
-                      <ImageIcon className="w-6 h-6 text-medium-contrast" />
+                      <ImageIcon className="w-4 h-4 sm:w-6 sm:h-6 text-medium-contrast" />
                     </div>
                   </div>
                   
-                  {/* Movie Info */}
+                  {/* Movie Info - Mobile Optimized */}
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-medium text-high-contrast truncate scholarly-heading">
+                    <h4 className="text-xs sm:text-sm font-medium text-high-contrast truncate scholarly-heading">
                       {movie.title}
                     </h4>
                     {movie.release_date && (

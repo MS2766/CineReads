@@ -41,31 +41,31 @@ export const RecommendationResults: React.FC<RecommendationResultsProps> = ({
   }
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-high-contrast scholarly-heading flex items-center gap-2">
-          <Sparkles className="w-6 h-6 text-primary" />
-          Your Book Recommendations
+    <div className="space-y-6 sm:space-y-8">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <h2 className="text-xl sm:text-2xl font-bold text-high-contrast scholarly-heading flex items-center gap-2 text-center sm:text-left">
+          <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+          <span>Your Book Recommendations</span>
         </h2>
         <button
           onClick={onRegenerate}
-          className="btn-secondary px-6 py-3 rounded-xl flex items-center gap-2 focusable"
+          className="btn-secondary px-4 sm:px-6 py-2 sm:py-3 rounded-xl flex items-center gap-2 focusable text-sm sm:text-base"
         >
-          <Sparkles className="w-4 h-4" />
-          Regenerate
+          <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
+          <span>Regenerate</span>
         </button>
       </div>
 
       {recommendations.map((recommendation, index) => (
-        <div key={index} className="space-y-6">
-          <div className="flex items-center gap-3 pb-4 border-b border-card-border">
-            <Film className="w-5 h-5 text-primary" />
-            <h3 className="text-xl font-semibold text-high-contrast scholarly-heading">
+        <div key={index} className="space-y-4 sm:space-y-6">
+          <div className="flex items-center gap-2 sm:gap-3 pb-3 sm:pb-4 border-b border-card-border">
+            <Film className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+            <h3 className="text-lg sm:text-xl font-semibold text-high-contrast scholarly-heading text-center sm:text-left">
               Based on your taste for {recommendation.movie}
             </h3>
           </div>
           
-          <div className="grid gap-4">
+          <div className="grid gap-3 sm:gap-4">
             {recommendation.books.map((book, bookIndex) => (
               <BookCard key={bookIndex} book={book} />
             ))}
