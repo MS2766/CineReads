@@ -12,6 +12,9 @@ jobs:
     defaults:
       run:
         working-directory: backend
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      HARDCOVER_API_KEY: ${{ secrets.HARDCOVER_API_KEY }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
