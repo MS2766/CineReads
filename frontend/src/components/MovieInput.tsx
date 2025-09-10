@@ -26,7 +26,6 @@ export const MovieInput: React.FC<MovieInputProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
-  // Enhanced debounced search with better UX
   useEffect(() => {
     const searchMovies = async () => {
       if (inputValue.trim().length < 2) {
