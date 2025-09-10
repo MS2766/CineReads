@@ -185,7 +185,6 @@
   animation: orb-float 30s ease-in-out infinite reverse;
 }
 
-/* Enhanced Glass Morphism - Accessibility Focused */
 .glass-panel {
   background: var(--glass-background);
   backdrop-filter: blur(12px) saturate(120%);
